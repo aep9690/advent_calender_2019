@@ -216,7 +216,6 @@ int main()
                 {
                     minDist = dist;
                 }
-                // cout << wire1[i][0] << " + " << wire1[i][1] << " -> " << i << " + " << j << " = " << dist << "\n";
             }
         }
     }
