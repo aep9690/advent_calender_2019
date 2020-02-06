@@ -37,35 +37,64 @@ int* getDigits(int input, int n)
 
 bool doesRepeat(int input[], int n)
 {
-    bool repeat = false;
-    int valuePP, valueP, value;
-    for(int i = 2; i < n; i++)
+    bool consec = false;
+    bool prev = false;
+    bool next = false;
+    for (int i = 0; i < n - 1; i++)
     {
-        valuePP = input[i - 2];
-        valueP = input[i - 1];
-        value = input[i];
-        if(valuePP == valueP)
+        // Check if there are two numbers in a row
+        if (input[i] == input [i + 1])
         {
-            if(valueP == value)
+            consec = true;
+        }
+        else
+        {
+            consec = false;
+        }
+        
+        // Check the i and i - 1 value
+        if (i > 0)
+        {
+            if (input[i - 1] == input[i])
             {
-                repeat = false;
+                prev = true;
             }
             else
             {
-                return true;
+                prev = false;
             }
-            
-            repeat = true;
+        }
+        else
+        {
+            prev = false;
+        }
+        
+
+        // Check the i + 1 and i + 2 value
+        if (i < n - 2)
+        {
+            if (input[i + 1] == input[i + 2])
+            {
+                next = true;
+            }
+            else
+            {
+                next = false;
+            }
+        }
+        else
+        {
+            next = false;
+        }
+
+        // Check consecutive values
+        if (consec & !prev & !next)
+        {
+            return true;
         }
     }
 
-    // for(int i = 0; i < n; i++)
-    // {
-    //     cout << input[i];
-    // }
-    // cout << " " << repeat << "\n";
-
-    return repeat;
+    return false;
 }
 
 bool doesIncrease(int input[], int n)
@@ -90,9 +119,9 @@ bool isValid(int input)
 {
     int n = getNumDigits(input);
     int *digits = getDigits(input, n);
-    bool repeats = doesRepeat(digits, n);
     bool increases = doesIncrease(digits, n);
-    if(repeats & increases)
+    bool repeats = doesRepeat(digits, n);
+    if (increases & repeats)
     {
         return true;
     }
@@ -104,8 +133,6 @@ int main()
 {
     int minPassword = 234208;
     int maxPassword = 765869;
-    // int minPassword = 11111;
-    // int maxPassword = 12000;
 
     int count = 0;
     for(int password = minPassword;
@@ -115,6 +142,11 @@ int main()
         if(isValid(password))
         {
             count++;
+            // cout << password << ": True\n";
+        }
+        else
+        {
+            // cout << password << ": False\n";
         }
     }
 
