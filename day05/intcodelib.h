@@ -96,64 +96,16 @@ int intcode::get_value(int addr, intcode::MODE mode)
     {
         return value;
     }
-    else
+    else if (mode == MODE::POSITION)
     {
         return code[value];
     }
-}
-
-// Runs int code
-void intcode::run_code()
-{
-    int length = code.size();
-    int index = 0;
-    int val1, val2;
-    int input, op_code;
-    intcode::MODE mode1, mode2, mode3;
-    for (int i = 0; i < length; i++)
+    else
     {
-        op_code = get_op_code(code[index]);
-        mode1 = get_param_mode(code[index], 1);
-        mode2 = get_param_mode(code[index], 2);
-        switch (op_code)
-        {
-            case OP::ADD:
-                val1 = get_value(index + 1, mode1);
-                val2 = get_value(index + 2, mode2);
-                set_memory(code[index + 3], val1 + val2);
-                index += 4;
-                break;
-
-            case OP::MULT:
-                val1 = get_value(index + 1, mode1);
-                val2 = get_value(index + 2, mode2);
-                set_memory(code[index + 3], val1 * val2);
-                index += 4;
-                break;
-
-            case OP::INPUT:
-                val1 = get_value(index + 1, mode1);
-                cout << "Enter integer input: ";
-                cin >> code[val1] ;
-                index += 2;
-                break;
-
-            case OP::OUTPUT:
-                val1 = get_value(index + 1, mode1);
-                cout << "Output: " << code[val1] << "\n";
-                index += 2;
-                break;
-
-            case OP::HALT:
-                return;
-
-            default:
-                cout << "Invalid op code: " << code[index] << "\n";
-                return;
-        }
-        print_memory();
+        cout << "Mode Invalid\n";
+        return 99;
     }
-    return;
+    
 }
 
 void intcode::set_memory(int addr, int value)
@@ -170,4 +122,60 @@ void intcode::print_memory()
 {
     print_vector(code);
 
+}
+
+// Runs int code
+void intcode::run_code()
+{
+    int length = code.size();
+    int index = 0;
+    int val1, val2, result;
+    int input, op_code, addr;
+    intcode::MODE mode1, mode2;
+    for (int i = 0; i < length; i++)
+    {
+        op_code = get_op_code(code[index]);
+        mode1 = get_param_mode(code[index], 1);
+        mode2 = get_param_mode(code[index], 2);
+        switch (op_code)
+        {
+            case OP::ADD:
+                val1 = get_value(index + 1, mode1);
+                val2 = get_value(index + 2, mode2);
+                result = val1 + val2;
+                set_memory(code[index + 3], result);
+                index += 4;
+                break;
+
+            case OP::MULT:
+                val1 = get_value(index + 1, mode1);
+                val2 = get_value(index + 2, mode2);
+                result = val1 * val2;
+                set_memory(code[index + 3], result);
+                index += 4;
+                break;
+
+            case OP::INPUT:
+                cout << "Enter integer input: ";
+                cin >> val1;
+                addr = code[index + 1];
+                set_memory(addr, val1);
+                index += 2;
+                break;
+
+            case OP::OUTPUT:
+                val1 = get_value(index + 1, mode1);
+                cout << "Output: " << val1 << "\n";
+                index += 2;
+                break;
+
+            case OP::HALT:
+                return;
+
+            default:
+                cout << "Invalid op code: " << code[index] << "\n";
+                return;
+        }
+    }
+    return;
 }
