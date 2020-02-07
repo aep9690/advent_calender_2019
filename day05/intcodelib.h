@@ -10,19 +10,32 @@ class intcode
 {
     vector<int> code;
 
-    enum mode
+    enum MODE
     {
-        position = 0,
-        immediate = 1
+        POSITION = 0,
+        IMMEDIATE = 1,
+        INVALID = 99
+    };
+
+    enum OP
+    {
+        ADD = 1,
+        MULT = 2,
+        INPUT = 3,
+        OUTPUT = 4,
+        HALT = 99
     };
 
     public:
         intcode(string);
+        intcode::OP get_op_code(int);
+        intcode::MODE get_param_mode(int, int);
+        vector<int> get_memory();
+        void set_memory(int, int);
+        void print_memory();
         void print_vector(vector<int>);
         void run_code();
-        void set_memory(int, int);
-        vector<int> get_memory();
-        void print_memory();
+        int get_value(int, intcode::MODE);
 };
 
 intcode::intcode(string filename)
@@ -58,59 +71,87 @@ void intcode::print_vector(vector<int> input)
     cout << "\n";
 }
 
+intcode::OP intcode::get_op_code(int inst)
+{
+    int op_code = inst % 100;
+    return static_cast<OP>(op_code);
+}
+
+intcode::MODE intcode::get_param_mode(int inst, int param)
+{
+    int divisor = 10;;
+    for (int i = 0; i < param; i++)
+    {
+        divisor *= 10;
+    }
+
+    int mode = (inst / divisor) % 10;
+    return static_cast<MODE>(mode);
+}
+
+int intcode::get_value(int addr, intcode::MODE mode)
+{
+    int value = code[addr];
+    if (mode == MODE::IMMEDIATE)
+    {
+        return value;
+    }
+    else
+    {
+        return code[value];
+    }
+}
+
 // Runs int code
 void intcode::run_code()
 {
     int length = code.size();
     int index = 0;
-    int loc_1, loc_2, loc_result;
-    int input;
+    int val1, val2;
+    int input, op_code;
+    intcode::MODE mode1, mode2, mode3;
     for (int i = 0; i < length; i++)
     {
-        switch (code[index])
+        op_code = get_op_code(code[index]);
+        mode1 = get_param_mode(code[index], 1);
+        mode2 = get_param_mode(code[index], 2);
+        switch (op_code)
         {
-        // Addition
-        case 1:
-            loc_1 = code[index + 1];
-            loc_2 = code[index + 2];
-            loc_result = code[index + 3];
-            code[loc_result] = code[loc_1] + code[loc_2];
-            index += 4;
-            break;
+            case OP::ADD:
+                val1 = get_value(index + 1, mode1);
+                val2 = get_value(index + 2, mode2);
+                set_memory(code[index + 3], val1 + val2);
+                index += 4;
+                break;
 
-        // Multiplication
-        case 2:
-            loc_1 = code[index + 1];
-            loc_2 = code[index + 2];
-            loc_result = code[index + 3];
-            code[loc_result] = code[loc_1] * code[loc_2];
-            index += 4;
-            break;
+            case OP::MULT:
+                val1 = get_value(index + 1, mode1);
+                val2 = get_value(index + 2, mode2);
+                set_memory(code[index + 3], val1 * val2);
+                index += 4;
+                break;
 
-        // Input
-        case 3:
-            loc_result = code[index + 1];
-            cout << "Enter integer input: ";
-            cin >> code[loc_result] ;
-            index += 2;
-            break;
+            case OP::INPUT:
+                val1 = get_value(index + 1, mode1);
+                cout << "Enter integer input: ";
+                cin >> code[val1] ;
+                index += 2;
+                break;
 
-        // Output
-        case 4:
-            loc_result = code[index + 1];
-            cout << "Output: " << code[loc_result] << "\n";
-            index += 2;
-            break;
+            case OP::OUTPUT:
+                val1 = get_value(index + 1, mode1);
+                cout << "Output: " << code[val1] << "\n";
+                index += 2;
+                break;
 
-        // Exit
-        case 99:
-            return;
+            case OP::HALT:
+                return;
 
-        // Errors
-        default:
-            cout << "Invalid op code: " << code[index] << "\n";
-            return;
+            default:
+                cout << "Invalid op code: " << code[index] << "\n";
+                return;
         }
+        print_memory();
     }
     return;
 }
