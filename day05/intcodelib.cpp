@@ -71,7 +71,6 @@ int intcode::get_value(int addr, intcode::MODE mode)
         cout << "Mode Invalid\n";
         return 99;
     }
-    
 }
 
 // Set value in memory
@@ -79,6 +78,7 @@ void intcode::set_memory(int index, int value)
 {
     int addr = code[index];
     code[addr] = value;
+    
 }
 
 // Print entire memory
@@ -92,11 +92,12 @@ void intcode::run_code()
 {
     int length = code.size();
     int index = 0;
-    int val1, val2, result;
+    int val1, val2, val3, result;
     int input, op_code;
     intcode::MODE mode1, mode2;
     for (int i = 0; i < length; i++)
     {
+        // print_memory();
         op_code = get_op_code(index);
         mode1 = get_param_mode(index, 1);
         mode2 = get_param_mode(index, 2);
@@ -105,16 +106,14 @@ void intcode::run_code()
             case OP::ADD:
                 val1 = get_value(index + 1, mode1);
                 val2 = get_value(index + 2, mode2);
-                result = val1 + val2;
-                set_memory(index + 3, result);
+                set_memory(index + 3, val1 + val2);
                 index += 4;
                 break;
 
             case OP::MULT:
                 val1 = get_value(index + 1, mode1);
                 val2 = get_value(index + 2, mode2);
-                result = val1 * val2;
-                set_memory(index + 3, result);
+                set_memory(index + 3, val1 * val2);
                 index += 4;
                 break;
 
@@ -131,6 +130,59 @@ void intcode::run_code()
                 index += 2;
                 break;
 
+            case OP::JUMP_TRUE:
+                val1 = get_value(index + 1, mode1);
+                if (val1 != 0)
+                {
+                    index = get_value(index + 2, mode2);
+                }
+                else
+                {
+                    index += 3;
+                }
+                break;
+
+            case OP::JUMP_FALSE:
+                val1 = get_value(index + 1, mode1);
+                if (val1 == 0)
+                {
+                    index = get_value(index + 2, mode2);
+                }
+                else
+                {
+                    index += 3;
+                }
+                
+                break;
+
+            case OP::LESS:
+                val1 = get_value(index + 1, mode1);
+                val2 = get_value(index + 2, mode2);
+                if (val1 < val2)
+                {
+                    set_memory(index + 3, 1);
+                }
+                else
+                {
+                    set_memory(index + 3, 0);
+                }
+                index += 4;
+                break;
+
+            case OP::EQUAL:
+                val1 = get_value(index + 1, mode1);
+                val2 = get_value(index + 2, mode2);
+                if (val1 == val2)
+                {
+                    set_memory(index + 3, 1);
+                }
+                else
+                {
+                    set_memory(index + 3, 0);
+                }
+                index += 4;
+                break;
+
             case OP::HALT:
                 return;
 
@@ -139,4 +191,4 @@ void intcode::run_code()
                 return;
         }
     }
-};
+}

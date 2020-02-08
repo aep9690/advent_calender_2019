@@ -23,6 +23,10 @@ class intcode
         MULT = 2,
         INPUT = 3,
         OUTPUT = 4,
+        JUMP_TRUE = 5,
+        JUMP_FALSE = 6,
+        LESS = 7,
+        EQUAL = 8,
         HALT = 99
     };
 
