@@ -93,7 +93,8 @@ void intcode::run_code()
     int length = code.size();
     int index = 0;
     int val1, val2, val3, result;
-    int input, op_code;
+    int input;
+    intcode::OP op_code;
     intcode::MODE mode1, mode2;
     for (int i = 0; i < length; i++)
     {
