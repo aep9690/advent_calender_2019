@@ -23,7 +23,7 @@
                     "ignoreFailures": false
                 }
             ],
-            "preLaunchTask": "build day5",
+            "preLaunchTask": "build day6",
         }
     ]
 }
