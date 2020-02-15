@@ -80,22 +80,21 @@ map<string, node> addSatellite(map<string, node> links, orbit orbit)
     return links;
 }
 
-int getParentConnection(map<string, node> links, string parent, int count)
+int getParentConnection(map<string, node> links, string name)
 {
-    if (parent == "COM")
+    int count = 0;
+    while (name != "COM")
     {
-        return 1;
+        name = links[name].parent;
+        count++;
     }
-    else
-    {
-        string newParent = links[parent].parent;
-        return count + getParentConnection(links, newParent, count);
-    }
+
+    return count;
 }
 
 int main()
 {
-    ifstream in("orbit_01_ut.txt");
+    ifstream in("part_one.txt");
     map<string, node> links;
     string str;
     while (getline(in, str))
@@ -105,13 +104,14 @@ int main()
         links = addSatellite(links, map);
     }
 
+    int x = 0;
     for (auto node : links)
     {
-        // int x = getParentConnection(links, node.second.parent, 0);
-        // cout << node.first << " has " << x << " connections\n";
-        cout << node.first << " orbits " << node.second.parent << " and has two satellites: ";
-        cout << node.second.child1 << " and " << node.second.child2 << "\n";
+        string body = node.first;
+        x += getParentConnection(links, body);
     }
+
+    cout << "Total Connections: " << x << "\n";
 
     return 0;
 }
