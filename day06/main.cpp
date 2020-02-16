@@ -137,6 +137,19 @@ int main()
     links = makeOrbitMap("part_two.txt");
     vector<string> myOrbit = getConnectionMap(links, "YOU");
     vector<string> santaOrbit = getConnectionMap(links, "SAN");
+    for (int i = 0; i < myOrbit.size(); i++)
+    {
+        for (int j = 0; j < santaOrbit.size(); j++)
+        {
+            if (myOrbit.at(i) == santaOrbit.at(j))
+            {
+                cout << "Shortest path is " << i + j << "\n";
+                return 0;
+            }
+        }
+    }
 
+    cout << "No path exists between you and Santa.\n";
     return 0;
+
 }
