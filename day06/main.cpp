@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include <vector>
 
 using namespace std;
 
@@ -92,18 +93,37 @@ int getParentConnection(map<string, node> links, string name)
     return count;
 }
 
-int main()
+vector<string> getConnectionMap(map<string, node> links, string name)
 {
-    ifstream in("part_one.txt");
+    vector<string> connections;
+    while (name != "COM")
+    {
+        name = links[name].parent;
+        connections.push_back(name);
+    }
+
+    return connections;
+}
+
+map<string, node> makeOrbitMap(string filename)
+{
+    ifstream partOne(filename);
     map<string, node> links;
     string str;
-    while (getline(in, str))
+    while (getline(partOne, str))
     {
     	orbit map = parseOrbit(str);
         links = addCenter(links, map);
         links = addSatellite(links, map);
     }
 
+    return links;
+}
+
+int main()
+{
+    // Part One: Parse orbit map into a tree and then find total number of connections
+    map<string, node> links = makeOrbitMap("part_one.txt");
     int x = 0;
     for (auto node : links)
     {
@@ -112,6 +132,11 @@ int main()
     }
 
     cout << "Total Connections: " << x << "\n";
+
+    // Part Two: Find path through tree
+    links = makeOrbitMap("part_two.txt");
+    vector<string> myOrbit = getConnectionMap(links, "YOU");
+    vector<string> santaOrbit = getConnectionMap(links, "SAN");
 
     return 0;
 }
