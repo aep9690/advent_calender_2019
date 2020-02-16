@@ -1,0 +1,23 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "build day7",
+        "type": "shell",
+        "command": "C:/Mingw-w64/x86_64-8.1.0-win32-seh-rt_v6-rev0/mingw64/bin/g++",
+        "args": ["-g", "-o", "main", "main.cpp", "intcodelib.cpp"],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "presentation": {
+            "echo": true,
+            "reveal": "always",
+            "focus": true,
+            "panel": "shared",
+            "showReuseMessage": true,
+            "clear": true
+        }
+      }
+    ]
+  }
