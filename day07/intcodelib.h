@@ -12,6 +12,7 @@ class intcode
         vector<int> code;
         int input_index = 0;
         int n_input;
+        int output;
         int input[];
 
         enum MODE
@@ -45,4 +46,5 @@ class intcode
         void print_vector(vector<int>);
         void run_code();
         int get_value(int, intcode::MODE);
+        int get_output();
 };

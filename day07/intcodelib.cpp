@@ -105,6 +105,12 @@ void intcode::print_memory()
     print_vector(code);
 }
 
+// Get output
+int intcode::get_output()
+{
+    return output;
+}
+
 // Runs int code
 void intcode::run_code()
 {
@@ -143,8 +149,7 @@ void intcode::run_code()
                 break;
 
             case OP::OUTPUT:
-                val1 = get_value(index + 1, mode1);
-                cout << "Output: " << val1 << "\n";
+                output = get_value(index + 1, mode1);
                 index += 2;
                 break;
 
